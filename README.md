@@ -5,13 +5,19 @@
 
 ### No build time optimisation
 **Space:** 8.7M	target/release/devbook-bot
+
 **CPU:** 0.2%
+
 **Memory on RAM:** 2.3 MiB
+
 
 ### Build time optimisation
 **Space:** 6.0M	target/release/devbook-bot
-**CPU:** 0.1% or 0.0% :O
+
+**CPU:** 0.1% *or* 0.0% **:O**
+
 **Memory on RAM:** 2.3 MiB
+
 **Extra's in Cargo.toml:**
 
 ```toml
