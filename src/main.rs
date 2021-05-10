@@ -10,6 +10,9 @@ use serenity::
     async_trait,
     model::
     {
+        event::{
+            ResumedEvent,
+        },
         channel::
         {
             Message,
@@ -175,6 +178,9 @@ impl EventHandler for Handler {
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
+   async fn resume(&self, _: Context, _: ResumedEvent) {
+       println!("Reconnected")
+   }
 }
 
 #[tokio::main]
@@ -194,10 +200,10 @@ async fn main() {
         data.insert::<ShardManagerContainer>(client.shard_manager.clone());
     }
 
-    /*let file = fs::File::open("./db/tags.json")
+    let file = fs::File::open("./db/tags.json")
       .expect("file should open read only");
       let json: serde_json::Value = serde_json::from_reader(file)
-      .expect("file should be proper JSON");*/
+      .expect("file should be proper JSON");
 
 
     if let Err(why) = client.start().await {
