@@ -71,10 +71,10 @@ impl EventHandler for Handler {
                 },
             };
             if let Err(why) = msg.edit(&ctx, |m| 
-                                m.content(
-                                    format!("Https Ping: {:?}ms\nShard Ping: {:?}", (new-old).as_millis(), runner.latency.expect("Unable to get Shard ping"))
-                                    )
-                                ).await{
+                                       m.content(
+                                           format!("Https Ping: {:?}ms\nShard Ping: {:?}", (new-old).as_millis(), runner.latency.expect("Unable to get Shard ping"))
+                                           )
+                                      ).await{
                 println!("Error editting message: {:?}", why);
             };
 
@@ -85,12 +85,17 @@ impl EventHandler for Handler {
             }
         }
         else if command == PREFIX.to_owned()+"quit"{
-            let data = ctx.data.read().await;
-            if let Some(manager) = data.get::<ShardManagerContainer>() {
-                msg.reply(&ctx, "Shutting down!").await.expect("Unable to shutdown");
-                manager.lock().await.shutdown_all().await;
-            } else {
-                msg.reply(&ctx, "There was a problem getting the shard manager").await.expect("Double Interupt");
+            if !utils::is_user_mod(msg.member(&ctx.http).await.expect("Unable to get member").user.id.as_mut_u64()){
+                msg.reply(&ctx.http, "This is a mod only command").await.expect("");
+            }
+            else{
+                let data = ctx.data.read().await;
+                if let Some(manager) = data.get::<ShardManagerContainer>() {
+                    msg.reply(&ctx, "Shutting down!").await.expect("Unable to shutdown");
+                    manager.lock().await.shutdown_all().await;
+                } else {
+                    msg.reply(&ctx, "There was a problem getting the shard manager").await.expect("Double Interupt");
+                }
             }
         }
         else if command == PREFIX.to_owned()+"mkrole"{
@@ -107,8 +112,8 @@ impl EventHandler for Handler {
                 msg.reply(
                     &ctx.http, format!("A role with the name already exists, instead use {}assign {} to get the role", PREFIX, 
                                        pguild.role_by_name(msg_args[2]).expect("Unable to retreive role").mention().to_string()
-                                       )
-                ).await.expect("Unable to send message");
+                                      )
+                    ).await.expect("Unable to send message");
             }
             else{
                 let hex = msg_args[1];
@@ -120,6 +125,17 @@ impl EventHandler for Handler {
                 msg.reply(&ctx.http, format!("Made role {}", role.mention().to_string())).await.expect("Unable to send message");
             }
         }
+        else if command== PREFIX.to_owned()+"gang"{
+            let gang_role:Role = ctx.http.get_guild(787118958012661790).await.expect("Unable to get guild")
+                .role_by_name("[) gang").expect("Unable to get role").clone();
+            let mut member = msg.member(&ctx.http).await.expect("Unable to retreive member");
+            member.add_role(&ctx.http, gang_role).await.expect("Unable to add role");
+            member.edit(
+                &ctx.http, |em| em.nickname( 
+                    format!("[) {}", msg.member.expect("Unable to get member").nick.expect("Unable to get nick"))
+                    )
+                ).await.expect("Unable to access member");
+        }
         else if command== PREFIX.to_owned()+"assign"{
             let roles = &msg.mention_roles;
             let mut member = msg.member(&ctx.http).await.expect("Unable to retreive member");
@@ -127,13 +143,13 @@ impl EventHandler for Handler {
                 if utils::is_assignable_role(&role.0){
                     msg.reply(
                         &ctx.http, format!("Added {}", role.mention().to_string())
-                    ).await.expect("Unable to respond");
+                        ).await.expect("Unable to respond");
                     member.add_role(&ctx.http, role).await.expect("Unable to add role");
                 }
                 else {
                     msg.reply(
                         &ctx.http, format!("Role {} can't be added as it's private", role.mention().to_string())
-                    ).await.expect("Unable to respond");
+                        ).await.expect("Unable to respond");
                 }
             }
         }
@@ -144,13 +160,13 @@ impl EventHandler for Handler {
                 if utils::is_assignable_role(&role.0){
                     msg.reply(
                         &ctx.http, format!("Removed {}", role.mention().to_string())
-                    ).await.expect("Unable to respond");
+                        ).await.expect("Unable to respond");
                     member.add_role(&ctx.http, role).await.expect("Unable to remove role");
                 }
                 else {
                     msg.reply(
                         &ctx.http, format!("Role {} can't be removed as it's private", role.mention().to_string())
-                    ).await.expect("Unable to respond");
+                        ).await.expect("Unable to respond");
                 }
             }
         }
