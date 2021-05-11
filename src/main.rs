@@ -161,7 +161,7 @@ impl EventHandler for Handler {
                     msg.reply(
                         &ctx.http, format!("Removed {}", role.mention().to_string())
                         ).await.expect("Unable to respond");
-                    member.add_role(&ctx.http, role).await.expect("Unable to remove role");
+                    member.remove_role(&ctx.http, role).await.expect("Unable to remove role");
                 }
                 else {
                     msg.reply(
