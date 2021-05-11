@@ -10,18 +10,15 @@ use serenity::
     async_trait,
     model::
     {
-        event::{
-            ResumedEvent,
-        },
+        event::ResumedEvent,
         channel::
         {
             Message,
             MessageType,
             ReactionType
         },
-        guild::{Role, PartialGuild},
+        guild::Role,
         gateway::Ready,
-        id::{RoleId}
     },
     client::bridge::gateway::{ShardManager, ShardId, GatewayIntents},
     prelude::*,
@@ -135,7 +132,7 @@ impl EventHandler for Handler {
             member.add_role(&ctx.http, gang_role).await.expect("Unable to add role");
             member.edit(
                 &ctx.http, |em| em.nickname( 
-                    format!("[) {}", msg.member.expect("Unable to get member").nick.expect("Unable to get nick"))
+                    format!("[) {}", member.clone().display_name().into_owned())
                     )
                 ).await.expect("Unable to access member");
         }
@@ -200,10 +197,10 @@ async fn main() {
         data.insert::<ShardManagerContainer>(client.shard_manager.clone());
     }
 
-    let file = fs::File::open("./db/tags.json")
+    /*let file = fs::File::open("./db/tags.json")
       .expect("file should open read only");
       let json: serde_json::Value = serde_json::from_reader(file)
-      .expect("file should be proper JSON");
+      .expect("file should be proper JSON");*/
 
 
     if let Err(why) = client.start().await {
