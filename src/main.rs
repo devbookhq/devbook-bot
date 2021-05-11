@@ -31,7 +31,6 @@ impl TypeMapKey for ShardManagerContainer {
 }
 
 struct Handler;
-// valenta, mlejva, mTvare, gaetgu
 
 const PREFIX:&str = "!";
 
