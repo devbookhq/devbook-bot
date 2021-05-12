@@ -5,6 +5,8 @@ use std::{
     time::Instant,
 };
 
+use string_builder::Builder;
+
 use serenity::
 {
     async_trait,
@@ -168,6 +170,17 @@ impl EventHandler for Handler {
                         ).await.expect("Unable to respond");
                 }
             }
+        }
+        else if command== PREFIX.to_owned()+"list"{
+            let roles = &ctx.http.get_guild(msg.guild_id.expect("Unable to retreive guild").0).await.expect("Unable to get guild")
+                .roles;
+            let mut sb = Builder::default();
+            for (role_id, role) in roles{
+                if utils::is_assignable_role(&role_id.0){
+                    sb.append(format!("{} ", role.mention().to_string()));
+                }
+            }
+            msg.reply(&ctx.http, sb.string().expect("UTF8 Error")).await.expect("Unable to reply");
         }
     }
 
