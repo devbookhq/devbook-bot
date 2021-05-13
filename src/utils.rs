@@ -22,3 +22,10 @@ pub fn is_assignable_role(rid:&u64) -> bool{
             rid == &NON_ASSIGNABLE_ROLE[6] || rid == &NON_ASSIGNABLE_ROLE[7] )
 }
 
+pub fn tags(tag:&str) -> Option<&str>{
+  return match tag {
+    "roadmap" => Some("long strnig"),
+    "invite" => Some("https://discord.gg/ypuZfadw8H"),
+    _ => None,
+  };
+}

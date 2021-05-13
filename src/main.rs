@@ -182,6 +182,15 @@ impl EventHandler for Handler {
             }
             msg.reply(&ctx.http, sb.string().expect("UTF8 Error")).await.expect("Unable to reply");
         }
+        else if command== PREFIX.to_owned()+"tag"{
+            let subcommand = msg_args[1];
+            let res = utils::tags(subcommand);
+            if res.is_none(){
+                msg.reply(&ctx.http, "Tag not found").await.expect("Unable to reply");
+            }else{
+                msg.reply(&ctx.http, res.unwrap()).await.expect("Unable to reply");
+            }
+        }
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
