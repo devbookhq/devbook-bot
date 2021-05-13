@@ -138,36 +138,52 @@ impl EventHandler for Handler {
                 ).await.expect("Unable to access member");
         }
         else if command== PREFIX.to_owned()+"assign"{
-            let roles = &msg.mention_roles;
             let mut member = msg.member(&ctx.http).await.expect("Unable to retreive member");
-            for role in roles{
-                if utils::is_assignable_role(&role.0){
-                    msg.reply(
-                        &ctx.http, format!("Added {}", role.mention().to_string())
-                        ).await.expect("Unable to respond");
-                    member.add_role(&ctx.http, role).await.expect("Unable to add role");
+            let guild = &ctx.http.get_guild(msg.guild_id.expect("Unale to get guild id").0).await.expect("Unable to retreive guild");
+            for i in 1..msg_args.len(){
+                let r_name = msg_args[i];
+                let res_role = guild.role_by_name(r_name);
+                if res_role.is_none(){
+                    msg.reply(&ctx.http, "No role with name found").await.expect("Unable to send message");
                 }
-                else {
-                    msg.reply(
-                        &ctx.http, format!("Role {} can't be added as it's private", role.mention().to_string())
-                        ).await.expect("Unable to respond");
+                else{
+                    let role = res_role.expect("Unable to retreive role");
+                    if utils::is_assignable_role(&role.id.0){
+                        msg.reply(
+                            &ctx.http, format!("Added {}", role.name)
+                            ).await.expect("Unable to respond");
+                        member.add_role(&ctx.http, role).await.expect("Unable to add role");
+                    }
+                    else {
+                        msg.reply(
+                            &ctx.http, format!("Role {} can't be added as it's private", role.mention().to_string())
+                            ).await.expect("Unable to respond");
+                    }
                 }
             }
         }
         else if command== PREFIX.to_owned()+"unassign"{
-            let roles = &msg.mention_roles;
             let mut member = msg.member(&ctx.http).await.expect("Unable to retreive member");
-            for role in roles{
-                if utils::is_assignable_role(&role.0){
-                    msg.reply(
-                        &ctx.http, format!("Removed {}", role.mention().to_string())
-                        ).await.expect("Unable to respond");
-                    member.remove_role(&ctx.http, role).await.expect("Unable to remove role");
+            let guild = &ctx.http.get_guild(msg.guild_id.expect("Unale to get guild id").0).await.expect("Unable to retreive guild");
+            for i in 1..msg_args.len(){
+                let r_name = msg_args[i];
+                let res_role = guild.role_by_name(r_name);
+                if res_role.is_none(){
+                    msg.reply(&ctx.http, "No role with name found").await.expect("Unable to send message");
                 }
-                else {
-                    msg.reply(
-                        &ctx.http, format!("Role {} can't be removed as it's private", role.mention().to_string())
-                        ).await.expect("Unable to respond");
+                else{
+                    let role = res_role.expect("Unable to retreive role");
+                    if utils::is_assignable_role(&role.id.0){
+                        msg.reply(
+                            &ctx.http, format!("Added {}", role.name)
+                            ).await.expect("Unable to respond");
+                        member.remove_role(&ctx.http, role).await.expect("Unable to add role");
+                    }
+                    else {
+                        msg.reply(
+                            &ctx.http, format!("Role {} can't be removed as it's private", role.mention().to_string())
+                            ).await.expect("Unable to respond");
+                    }
                 }
             }
         }
@@ -177,7 +193,7 @@ impl EventHandler for Handler {
             let mut sb = Builder::default();
             for (role_id, role) in roles{
                 if utils::is_assignable_role(&role_id.0){
-                    sb.append(format!("{} ", role.mention().to_string()));
+                    sb.append(format!("{}, ", role.name));
                 }
             }
             msg.reply(&ctx.http, sb.string().expect("UTF8 Error")).await.expect("Unable to reply");
