@@ -175,9 +175,9 @@ impl EventHandler for Handler {
                     let role = res_role.expect("Unable to retreive role");
                     if utils::is_assignable_role(&role.id.0){
                         msg.reply(
-                            &ctx.http, format!("Added {}", role.name)
+                            &ctx.http, format!("Removed {}", role.name)
                             ).await.expect("Unable to respond");
-                        member.remove_role(&ctx.http, role).await.expect("Unable to add role");
+                        member.remove_role(&ctx.http, role).await.expect("Unable to remove role");
                     }
                     else {
                         msg.reply(
@@ -233,12 +233,6 @@ async fn main() {
         let mut data = client.data.write().await;
         data.insert::<ShardManagerContainer>(client.shard_manager.clone());
     }
-
-    /*let file = fs::File::open("./db/tags.json")
-      .expect("file should open read only");
-      let json: serde_json::Value = serde_json::from_reader(file)
-      .expect("file should be proper JSON");*/
-
 
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
