@@ -150,7 +150,7 @@ impl EventHandler for Handler {
                     let role = res_role.expect("Unable to retreive role");
                     if utils::is_assignable_role(&role.id.0){
                         msg.reply(
-                            &ctx.http, format!("Added {}", role.name)
+                            &ctx.http, format!("I just assigned @{} to @{}", role.name, member.clone().display_name().into_owned() )
                             ).await.expect("Unable to respond");
                         member.add_role(&ctx.http, role).await.expect("Unable to add role");
                     }
@@ -175,7 +175,7 @@ impl EventHandler for Handler {
                     let role = res_role.expect("Unable to retreive role");
                     if utils::is_assignable_role(&role.id.0){
                         msg.reply(
-                            &ctx.http, format!("Removed {}", role.name)
+                            &ctx.http, format!("I just removed @{} from @{}", role.name, member.clone().display_name().into_owned())
                             ).await.expect("Unable to respond");
                         member.remove_role(&ctx.http, role).await.expect("Unable to remove role");
                     }
@@ -193,7 +193,7 @@ impl EventHandler for Handler {
             let mut sb = Builder::default();
             for (role_id, role) in roles{
                 if utils::is_assignable_role(&role_id.0){
-                    sb.append(format!("{}, ", role.name));
+                    sb.append(format!("@{}, ", role.name));
                 }
             }
             msg.reply(&ctx.http, sb.string().expect("UTF8 Error")).await.expect("Unable to reply");

@@ -24,7 +24,7 @@ pub fn is_assignable_role(rid:&u64) -> bool{
 
 pub fn tags(tag:&str) -> Option<&str>{
   return match tag {
-    "roadmap" => Some("long strnig"),
+    "roadmap" => Some("https://trello.com/b/NnOWzu29/devbook-roadmap"),
     "invite" => Some("https://discord.gg/ypuZfadw8H"),
     _ => None,
   };
